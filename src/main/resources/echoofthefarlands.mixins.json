@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "com.chewylopez.echoofthefarlands.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "minVersion": "0.8",
+  "refmap": "echoofthefarlands.refmap.json",
+  "mixins": [
+    "noise.NoiseChunkGeneratorMixin",
+    "noise.OctavesNoiseGeneratorMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

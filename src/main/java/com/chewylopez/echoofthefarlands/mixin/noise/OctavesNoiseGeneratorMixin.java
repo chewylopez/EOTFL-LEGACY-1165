@@ -58,29 +58,6 @@ public class OctavesNoiseGeneratorMixin {
         return FARLANDS_LOCATION * NOISE_SCALAR_CONSTANT;
     }
 
-    /**
-     * Gen type 2, "Unscaled": shift the coordinate outward by the gap between the
-     * configured farlands location and the coordinate where vanilla's precision loss
-     * naturally occurs. The breakdown is a fixed artifact of float precision at
-     * ~12.55M, so moving the farlands inward means feeding the noise a coordinate that
-     * far ahead of where we actually are.
-     */
-    @Unique
-    private static double offsetUnscaledGeneration(double value){
-        double returnable = value;
-        if(value >= 0) {
-            returnable = value + (getStartPosDelta() * NOISE_SCALAR_CONSTANT);
-        }
-        if(value < 0) {
-            returnable = value - (getStartPosDelta() * NOISE_SCALAR_CONSTANT);
-        }
-        return returnable;
-    }
-
-    /**
-     * @param value a noise coordinate, already scaled by the octave's input factor --
-     *              not a block coordinate
-     */
     @Inject(method = "wrap", at = @At("HEAD"), cancellable = true)
     private static void wrapFarlands(double value, CallbackInfoReturnable<Double> cir) {
 
@@ -93,5 +70,18 @@ public class OctavesNoiseGeneratorMixin {
         if (returnable != value) {
             cir.setReturnValue(returnable);
         }
+    }
+
+    @Unique
+    private static double offsetUnscaledGeneration(double value){
+        double returnable = value;
+
+        if(value >= 0) {
+            returnable = value + (getStartPosDelta() * NOISE_SCALAR_CONSTANT);
+        }
+        if(value < 0) {
+            returnable = value - (getStartPosDelta() * NOISE_SCALAR_CONSTANT);
+        }
+        return returnable;
     }
 }

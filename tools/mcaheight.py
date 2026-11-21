@@ -73,9 +73,12 @@ def unpack_heightmap(longs):
     return vals[:256]
 
 
-def scan(path, limit=None):
+def scan(path, limit=None, per_chunk=False):
+    """(heights, chunk_count), or with per_chunk also a list of (cx, cz, heights)
+    so a boundary can be located to the exact chunk."""
     data = open(path, "rb").read()
     heights = []
+    rows = []
     chunks = 0
     for idx in range(1024):
         off = struct.unpack(">I", b"\0" + data[idx * 4:idx * 4 + 3])[0]
@@ -94,14 +97,37 @@ def scan(path, limit=None):
         hm = (lvl.get("Heightmaps") or {}).get("WORLD_SURFACE")
         if not hm:
             continue
-        heights.extend(unpack_heightmap(hm))
+        vals = unpack_heightmap(hm)
+        heights.extend(vals)
+        if per_chunk:
+            rows.append((lvl.get("xPos"), lvl.get("zPos"), vals))
         chunks += 1
         if limit and chunks >= limit:
             break
+    if per_chunk:
+        return heights, chunks, rows
     return heights, chunks
 
 
+def summarise(vals):
+    v = sorted(vals)
+    return (v[0], v[len(v) // 2], v[-1], sum(v) / len(v),
+            100.0 * sum(1 for x in v if x >= 250) / len(v))
+
+
 if __name__ == "__main__":
+    if "--per-chunk" in sys.argv:
+        argv = [a for a in sys.argv if a != "--per-chunk"]
+        h, n, rows = scan(argv[1], per_chunk=True)
+        rows.sort(key=lambda r: (r[0] or 0, r[1] or 0))
+        print("%-10s %-8s %6s %7s %5s %7s" % ("chunkX", "blockX", "min", "median", "max", "%>=250"))
+        for cx, cz, vals in rows:
+            if cz not in (0, None):
+                continue  # one row of chunks is enough to see a boundary
+            mn, med, mx, mean, pct = summarise(vals)
+            print("%-10s %-8s %6d %7d %5d %6.1f%%" % (cx, (cx or 0) * 16, mn, med, mx, pct))
+        sys.exit(0)
+
     h, n = scan(sys.argv[1])
     if not h:
         print("no heightmap data found")

@@ -8,6 +8,9 @@
     "noise.NoiseChunkGeneratorMixin",
     "noise.OctavesNoiseGeneratorMixin"
   ],
+  "client": [
+    "client.ChunkRenderDispatcherMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

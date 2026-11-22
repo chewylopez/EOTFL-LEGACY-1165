@@ -14,10 +14,13 @@ public class OctavesNoiseGeneratorMixin {
     private static final double NOISE_SCALAR_CONSTANT = 171.103;
 
     @Unique
-    private static final double FARLANDS_ORIGINAL = 12550824;
+    private static final double FARLANDS_ORIGINAL = 12550823;
 
     @Unique
-    private static final double FARLANDS_LOCATION = 100000;
+    private static final double FARLANDS_LOCATION = 100;
+
+    @Unique
+    private static final double LINEAR_SCALAR_FACTOR = Math.pow(10.0, 15.0);
 
     @Unique
     private static double getStartPosDelta() {
@@ -79,6 +82,11 @@ public class OctavesNoiseGeneratorMixin {
             returnable = -Math.pow(Integer.MAX_VALUE, expScaleFactorProportional(value));
         }
         return returnable;
+    }
+
+    @Unique
+    private static double linearScaling(double value) {
+        return (value * LINEAR_SCALAR_FACTOR);
     }
 
 }

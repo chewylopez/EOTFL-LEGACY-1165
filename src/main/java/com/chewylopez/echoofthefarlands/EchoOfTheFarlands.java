@@ -1,5 +1,6 @@
 package com.chewylopez.echoofthefarlands;
 
+import com.chewylopez.echoofthefarlands.client.ClientConfigScreens;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -34,5 +35,6 @@ public class EchoOfTheFarlands
 
     private void doClientStuff(final FMLClientSetupEvent event) {
         LOGGER.info("{} client setup", MODID);
+        ClientConfigScreens.register();
     }
 }

@@ -9,7 +9,8 @@
     "noise.OctavesNoiseGeneratorMixin"
   ],
   "client": [
-    "client.ChunkRenderDispatcherMixin"
+    "client.ChunkRenderDispatcherMixin",
+    "client.CreateWorldScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
